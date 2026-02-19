@@ -1,10 +1,13 @@
 // jogador/mod.rs
 
+//! Define o jogador e a lógica de inicialização de uma partida
+
 mod simbolo;
 use std::fmt::Display;
 
 pub use simbolo::Simbolo;
 
+/// Um participante do jogo, identificado pelo nome e pelo símbolo que usa.
 #[derive(PartialEq, Eq)]
 pub struct Jogador {
     pub nome: String,
@@ -16,6 +19,10 @@ impl Jogador {
         Self { nome, simbolo }
     }
 
+    /// Inicializa os dois jogadores para uma partida
+    ///
+    /// O jogador 1 escolhe seu símbolo
+    /// O símbolo do jogador 2 é determinado automaticamente como o oposto
     pub fn iniciar(nome1: String, nome2: String, simbolo1: Simbolo) -> (Self, Self) {
         let simbolo2 = if simbolo1 == Simbolo::X {
             Simbolo::O
