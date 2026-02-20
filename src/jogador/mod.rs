@@ -1,4 +1,4 @@
-// jogador/mod.rs
+// src/jogador/mod.rs
 
 //! Define o jogador e a lógica de inicialização de uma partida
 
@@ -8,7 +8,7 @@ use std::fmt::Display;
 pub use simbolo::Simbolo;
 
 /// Um participante do jogo, identificado pelo nome e pelo símbolo que usa.
-#[derive(PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Jogador {
     pub nome: String,
     pub simbolo: Simbolo,
