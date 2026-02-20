@@ -1,57 +1,57 @@
 // src/main.rs
 
-//! Ponto de entrada do programa
+//! Entry point of the program.
 //!
-//! Coleta informações dos jogadores via terminal e inicia a partida
+//! Collects player information via the terminal and starts the match.
 
 use std::io::{self, Write};
-use ttt::{ErroJogo, Jogador, Partida, ResultadoJogo, Simbolo};
+use ttt::{Game, GameError, GameResult, Player, Symbol};
 
 fn main() {
-    println!("========== Jogo da Velha ==========");
+    println!("========== Tic-Tac-Toe ==========");
 
-    let jogador1 = pedir_nome("Insira o nome do primeiro jogador: ");
-    let simbolo1 = pedir_simbolo("Escolha o seu simbolo [X ou O]: ");
-    let jogador2 = pedir_nome("Insira o nome do segundo jogador: ");
+    let player1 = ask_name("Enter the name of the first player: ");
+    let symbol1 = ask_symbol("Choose your symbol [X or O]: ");
+    let player2 = ask_name("Enter the name of the second player: ");
 
-    let (jogador1, jogador2) = Jogador::iniciar(jogador1, jogador2, simbolo1);
+    let (player1, player2) = Player::create_pair(player1, player2, symbol1);
 
-    let partida = Partida::new(jogador1, jogador2);
+    let game = Game::new(player1, player2);
 
-    run(partida);
+    run(game);
 }
 
-fn run(mut partida: Partida) {
+fn run(mut game: Game) {
     loop {
-        println!("{}", &partida.tabuleiro);
+        println!("{}", &game.board);
 
-        let posicao = pedir_posicao(&format!(
-            "{}, insira sua próxima jogada (1-9): ",
-            partida.jogador_atual()
+        let position = ask_position(&format!(
+            "{}, enter your next move (1-9): ",
+            game.current_player()
         ));
 
-        match partida.jogar(posicao) {
-            Ok(ResultadoJogo::Vitoria) => {
-                println!("{}", &partida.tabuleiro);
-                println!("========= {} ganhou!!! =========", partida.jogador_atual());
+        match game.play(position) {
+            Ok(GameResult::Victory) => {
+                println!("{}", &game.board);
+                println!("========= {} won!!! =========", game.current_player());
                 break;
             }
 
-            Ok(ResultadoJogo::Empate) => {
-                println!("{}", &partida.tabuleiro);
-                println!("========= EMPATE!!! =========");
+            Ok(GameResult::Draw) => {
+                println!("{}", &game.board);
+                println!("========= DRAW!!! =========");
                 break;
             }
 
-            Ok(ResultadoJogo::EmAndamento) => continue,
+            Ok(GameResult::InProgress) => continue,
 
             Err(e) => eprintln!("{e}"),
         }
     }
 }
 
-/// Lê uma linha do terminal e retorna o conteúdo sem espaços nas bordas
-fn pedir_nome(msg: &str) -> String {
+/// Reads a line from the terminal and returns the trimmed content.
+fn ask_name(msg: &str) -> String {
     let mut input_buffer = String::new();
 
     loop {
@@ -66,9 +66,8 @@ fn pedir_nome(msg: &str) -> String {
     }
 }
 
-/// Lê o símbolo escolhido pelo jogador1 (X ou O)
-/// repetindo até receber uma entrada válida
-fn pedir_simbolo(msg: &str) -> Simbolo {
+/// Reads the symbol chosen by player 1 (X or O), repeating until a valid input is received.
+fn ask_symbol(msg: &str) -> Symbol {
     let mut input_buffer = String::new();
 
     loop {
@@ -80,16 +79,17 @@ fn pedir_simbolo(msg: &str) -> Simbolo {
         input_buffer = input_buffer.trim().to_lowercase();
 
         if input_buffer == "x" {
-            return Simbolo::X;
+            return Symbol::X;
         } else if input_buffer == "o" {
-            return Simbolo::O;
+            return Symbol::O;
         } else {
-            continue; // entrada inválida, o loop continua
+            continue; // invalid input, loop continues
         }
     }
 }
 
-fn pedir_posicao(msg: &str) -> usize {
+/// Reads a board position (1-9) from the terminal, repeating until a valid input is received.
+fn ask_position(msg: &str) -> usize {
     let mut input_buffer = String::new();
 
     loop {
@@ -100,9 +100,9 @@ fn pedir_posicao(msg: &str) -> usize {
         io::stdin().read_line(&mut input_buffer).unwrap();
 
         match input_buffer.trim().parse::<usize>() {
-            Ok(posicao) if posicao >= 1 && posicao <= 9 => return posicao,
+            Ok(position) if position >= 1 && position <= 9 => return position,
             _ => {
-                eprintln!("{}", ErroJogo::PosicaoInvalida);
+                eprintln!("{}", GameError::InvalidPosition);
                 continue;
             }
         }

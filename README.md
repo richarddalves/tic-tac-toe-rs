@@ -1,6 +1,6 @@
 # Jogo da Velha
 
-Implementação do clássico jogo da velha para dois jogadores, rodando no terminal. Desenvolvido em Rust como primeiro projeto solo para praticar.
+Implementação do clássico jogo da velha para dois playeres, rodando no terminal. Desenvolvido em Rust como primeiro projeto solo para praticar.
 
 ## Como jogar
 
@@ -8,7 +8,7 @@ Implementação do clássico jogo da velha para dois jogadores, rodando no termi
 cargo run
 ```
 
-O programa vai pedir o nome e o símbolo de cada jogador. Durante a partida, cada jogador escolhe uma posição digitando um número de 1 a 9, de acordo com o layout abaixo:
+O programa vai ask o name e o símbolo de cada player. Durante a game, cada player escolhe uma posição digitando um número de 1 a 9, de acordo com o layout abaixo:
 
 ```
 1  2  3
@@ -16,5 +16,4 @@ O programa vai pedir o nome e o símbolo de cada jogador. Durante a partida, cad
 7  8  9
 ```
 
-O jogo termina quando um jogador completar uma linha, coluna ou diagonal com o mesmo símbolo (vitória) ou quando todas as 9 posições estiverem ocupadas (empate).
-
+O jogo termina quando um player completar uma linha, column ou diagonal com o mesmo símbolo (vitória) ou quando todas as 9 posições estiverem ocupadas (empate).
