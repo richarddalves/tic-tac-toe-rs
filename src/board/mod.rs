@@ -61,6 +61,19 @@ impl Board {
     pub fn is_full(&self) -> bool {
         self.occupied_cells == 9
     }
+
+    /// Returns a list of all positions (1-9) that have not yet been marked
+    pub fn available_positions(&self) -> Vec<usize> {
+        let mut positions = Vec::new();
+
+        for cell in &self.cells {
+            if cell.symbol.is_none() {
+                positions.push(cell.position.value);
+            }
+        }
+
+        positions
+    }
 }
 
 impl Default for Board {
@@ -149,5 +162,14 @@ mod tests {
             board.mark(i, Symbol::X).unwrap();
         }
         assert!(!board.is_full());
+    }
+
+    #[test]
+    fn available_positions_decreases_after_mark() {
+        let mut board = Board::new();
+        assert_eq!(board.available_positions().len(), 9); // starts with 9 empty cells
+        board.mark(5, Symbol::X).unwrap();
+        assert_eq!(board.available_positions().len(), 8); // after mark, 8 empty cells
+        assert!(!board.available_positions().contains(&5)); // position 5 is not available anymore
     }
 }

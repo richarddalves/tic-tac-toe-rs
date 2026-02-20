@@ -5,30 +5,71 @@
 //! Collects player information via the terminal and starts the match.
 
 use std::io::{self, Write};
+use ttt::bot::{self, Difficulty};
 use ttt::{Game, GameError, GameResult, Player, Symbol};
+
+/// Defines how the game is being played:
+/// whether both positions come from human input, or one from the bot.
+enum GameMode {
+    Multiplayer,
+    Solo(Difficulty),
+}
 
 fn main() {
     println!("========== Tic-Tac-Toe ==========");
 
-    let player1 = ask_name("Enter the name of the first player: ");
+    let mode = ask_game_mode("Choose game mode -  [1] Solo  [2] Multiplayer: ");
+
+    
+
+    let player1 = match mode {
+        GameMode::Multiplayer => ask_name("Enter the name of the first player: "),
+        GameMode::Solo(_) => ask_name("Enter your name: "),
+    };
     let symbol1 = ask_symbol("Choose your symbol [X or O]: ");
-    let player2 = ask_name("Enter the name of the second player: ");
+    let bot_symbol = if symbol1 == Symbol::X {
+        Symbol::O
+    } else {
+        Symbol::X
+    };
+
+    let player2 = match &mode {
+        GameMode::Multiplayer => ask_name("Enter the name of the second player: "),
+        GameMode::Solo(_) => "Bot".to_string(),
+    };
 
     let (player1, player2) = Player::create_pair(player1, player2, symbol1);
 
     let game = Game::new(player1, player2);
 
-    run(game);
+    run(game, mode, bot_symbol);
 }
 
-fn run(mut game: Game) {
+fn run(mut game: Game, mode: GameMode, bot_symbol: Symbol) {
     loop {
         println!("{}", &game.board);
 
-        let position = ask_position(&format!(
-            "{}, enter your next move (1-9): ",
-            game.current_player()
-        ));
+        let position = match &mode {
+            GameMode::Multiplayer => ask_position(&format!(
+                "{}, enter your next move (1-9): ",
+                game.current_player()
+            )),
+
+            GameMode::Solo(difficulty) => {
+                if game.current_player().symbol == bot_symbol {
+                    match difficulty {
+                        Difficulty::Easy => bot::easy::random_move(&game.board),
+                        Difficulty::Medium => todo!("Medium not yet implemented"),
+                        Difficulty::Hard => todo!("Minimax not yet implemented"),
+                    }
+                } else {
+                    ask_position(&format!(
+                        "{}, enter your next move (1-9): ",
+                        game.current_player()
+                    ))
+                }
+            }
+        };
 
         match game.play(position) {
             Ok(GameResult::Victory) => {
@@ -105,6 +146,24 @@ fn ask_position(msg: &str) -> usize {
                 eprintln!("{}", GameError::InvalidPosition);
                 continue;
             }
+        }
+    }
+}
+
+fn ask_game_mode(msg: &str) -> GameMode {
+    let mut input_buffer = String::new();
+
+    loop {
+        print!("{msg}");
+        io::stdout().flush().unwrap();
+
+        input_buffer.clear();
+        io::stdin().read_line(&mut input_buffer).unwrap();
+
+        match input_buffer.trim() {
+            "1" => return GameMode::Solo(bot::Difficulty::Easy),
+            "2" => return GameMode::Multiplayer,
+            _ => println!("Please enter 1 or 2."),
         }
     }
 }

@@ -5,6 +5,7 @@
 //! Exposes the public types used by the binary and by external consumers.
 
 mod board;
+pub mod bot;
 mod error;
 mod game;
 mod player;
