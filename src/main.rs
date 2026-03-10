@@ -33,7 +33,7 @@ fn main() {
     println!("========== TIC TAC TOE ==========");
 
     let (player1, player2) = match ask_for_symbol("Insert player 1 symbol [X or O]: ") {
-        Ok(symbol) => (Player::new(symbol), Player::new(symbol.opposit())),
+        Ok(symbol) => (Player::new(symbol), Player::new(symbol.opposite())),
 
         Err(err) => {
             eprintln!("{:?}", err);

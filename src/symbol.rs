@@ -9,7 +9,7 @@ pub enum Symbol {
 }
 
 impl Symbol {
-    pub fn opposit(&self) -> Self {
+    pub fn opposite(&self) -> Self {
         match self {
             Self::X => Self::O,
             Self::O => Self::X,
