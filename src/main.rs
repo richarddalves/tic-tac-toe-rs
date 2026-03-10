@@ -48,9 +48,9 @@ fn main() {
 }
 
 fn run(mut game: Game) -> Result<(), InputError> {
+    game.show_board();
+    
     loop {
-        println!("{}", game.board);
-
         let current_player = game.current_player();
 
         let new_position = if &game.player1 == current_player {
@@ -60,7 +60,7 @@ fn run(mut game: Game) -> Result<(), InputError> {
         }?;
 
         if let Ok(game_result) = game.play(new_position) {
-            println!("{}", game.board);
+            game.show_board();
 
             match game_result {
                 GameState::Neutral => continue,

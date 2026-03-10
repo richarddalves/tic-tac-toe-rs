@@ -14,8 +14,8 @@ pub enum GameState {
 }
 
 pub struct Game {
-    pub round: u32,
-    pub board: Board,
+    round: u32,
+    board: Board,
     pub player1: Player,
     pub player2: Player,
 }
@@ -100,5 +100,9 @@ impl Game {
         }
 
         false
+    }
+
+    pub fn show_board(&self) {
+        println!("{}", self.board);
     }
 }
